@@ -21,7 +21,7 @@ class Client:
     def get_column_names():
         conn = mysql.connector.connect(user=USERNAME, password=PASSWORD, host=HOST, database=DATABASE)
         cur = conn.cursor()
-        cur.execute('show columns from client;')
+        cur.execute('show columns from Client')
         result = []
         for row in cur.fetchall():
             result.append(row[0])
@@ -33,7 +33,7 @@ class Client:
     def get_clients():
         conn = mysql.connector.connect(user=USERNAME, password=PASSWORD, host=HOST, database=DATABASE)
         cur = conn.cursor()
-        cur.execute('select * from client')
+        cur.execute('select * from Client')
         result = []
         for row in cur.fetchall():
             client = Client(*row)
@@ -47,7 +47,7 @@ class Client:
         conn = mysql.connector.connect(user=USERNAME, password=PASSWORD, host=HOST, database=DATABASE)
         cur = conn.cursor()
         cur.execute(
-            "insert into client values(%s, '%s', '%s', '%s')" %
+            "insert into Client values(%s, '%s', '%s', '%s')" %
             (int(number), firstname, lastname, date.fromisoformat(birthday))
         )
         conn.commit()
@@ -60,7 +60,7 @@ class Client:
         cur = conn.cursor()
         columns = Client.get_column_names()
         cur.execute(
-            f"update client "
+            f"update Client "
             f"set {columns[1]} = '{firstname}', "
             f"{columns[2]} = '{lastname}', "
             f"{columns[3]} = '{date.fromisoformat(birthday)}' "
@@ -76,7 +76,7 @@ class Client:
         cur = conn.cursor()
         columns = Client.get_column_names()
         cur.execute(
-            f"delete from client "
+            f"delete from Client "
             f"where {columns[0]} = {int(number)}"
         )
         conn.commit()
