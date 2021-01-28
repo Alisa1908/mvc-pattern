@@ -1,12 +1,8 @@
 #!/usr/bin/env python
+
 import mysql.connector
 from datetime import date
-
-# MySQL Server
-USERNAME = 'root'
-PASSWORD = 'root'
-HOST = '127.0.0.1'
-DATABASE = 'db'
+from settings import USERNAME, PASSWORD, HOST, DATABASE
 
 
 class Client:
@@ -86,8 +82,3 @@ class Client:
         conn.commit()
         cur.close()
         conn.close()
-
-
-if __name__ == '__main__':
-    # Client.update_client('1', 'gjhir', 'grwt', '2000-01-01')
-    # print(Client.get_column_names())
