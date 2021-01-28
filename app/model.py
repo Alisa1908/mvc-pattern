@@ -10,6 +10,7 @@ DATABASE = 'db01'
 
 
 class Client:
+
     def __init__(self, number=0, firstname=None, lastname=None, birthday=None):
         self.number = number
         self.firstname = firstname
