@@ -8,7 +8,7 @@ class Controller:
 
     def show_clients(self):
         clients = Client.get_clients()
-        return View.show_clients(clients)
+        View.show_clients(clients)
 
     def add_client(self):
         number = View.get_data('number')

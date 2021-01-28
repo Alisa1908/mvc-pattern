@@ -2,8 +2,13 @@
 
 import mysql.connector
 import unittest
+from unittest.mock import patch
+from contextlib import redirect_stdout
+import io
 from datetime import date
 from model import Client
+from view import View
+from controller import Controller
 from settings import USERNAME, PASSWORD, HOST, DATABASE
 
 
@@ -58,3 +63,82 @@ class TestClient(unittest.TestCase):
                 self.assertFalse('Client was not deleted')
 
 
+class TestView(unittest.TestCase):
+
+    def test_show_clients(self):
+        client1 = Client(123, 'Aaaaa', 'Bbbbb', '2001-01-01')
+        client2 = Client(456, 'Ccccc', 'Ddddd', '2002-02-02')
+        clients = [client1, client2]
+        f = io.StringIO()
+        with redirect_stdout(f):
+            View.show_clients(clients)
+        s = f.getvalue()
+        self.assertIn('2 client', s)
+        self.assertIn('123', s)
+        self.assertIn('456', s)
+        self.assertIn('Aaaaa', s)
+        self.assertIn('Bbbbb', s)
+        self.assertIn('Ccccc', s)
+        self.assertIn('Ddddd', s)
+        self.assertIn('2001-01-01', s)
+        self.assertIn('2002-02-02', s)
+
+    @patch('builtins.input', return_value='entered')
+    def test_get_data(self, input):
+        self.assertEqual(View.get_data('something'), 'entered')
+
+    def test_show_menu(self):
+        f = io.StringIO()
+        with redirect_stdout(f):
+            View.show_menu()
+        s = f.getvalue()
+        self.assertIn('Show', s)
+        self.assertIn('Add', s)
+        self.assertIn('Update', s)
+        self.assertIn('Delete', s)
+        self.assertIn('Exit', s)
+
+
+class TestController(unittest.TestCase):
+
+    def get_last_number(self):
+        return max(Client.get_clients(), key=lambda client: client.number).number
+
+    def test_show_clients(self):
+        number = self.get_last_number() + 1
+        Client.add_client(number, 'Testing', 'Controller', '2003-11-11')
+        f = io.StringIO()
+        with redirect_stdout(f):
+            Controller().show_clients()
+        s = f.getvalue()
+        self.assertIn('Testing', s)
+        self.assertIn('Controller', s)
+        self.assertIn('2003-11-11', s)
+
+    @patch('builtins.input', return_value='')
+    def test_add_client(self, input):
+        f = io.StringIO()
+        with redirect_stdout(f):
+            with self.assertRaises(ValueError):
+                Controller().add_client()
+
+    @patch('builtins.input', return_value='')
+    def test_update_client(self, input):
+        f = io.StringIO()
+        with redirect_stdout(f):
+            with self.assertRaises(ValueError):
+                Controller().update_client()
+
+    @patch('builtins.input', return_value='')
+    def test_delete_client(self, input):
+        f = io.StringIO()
+        with redirect_stdout(f):
+            with self.assertRaises(ValueError):
+                Controller().delete_client()
+
+    @patch('builtins.input', return_value='5')
+    def test_run(self, input):
+        f = io.StringIO()
+        with redirect_stdout(f):
+            Controller().run()
+        self.assertTrue(True)
